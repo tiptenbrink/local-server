@@ -15,7 +15,6 @@ GOOS=windows GOARCH=amd64 go build -o bin/windows-amd64/faroe
 echo 'building windows-386...'
 GOOS=windows GOARCH=386 go build -o bin/windows-386/faroe
 
-cd ..
 cd bin
 for dir in $(ls -d *); do
     tar cfzv "$dir".tgz $dir
