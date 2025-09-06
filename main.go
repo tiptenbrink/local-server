@@ -30,20 +30,22 @@ func main() {
 		return
 	}
 	userServerActionInvocationEndpoint := os.Args[2]
+	userActionInvocationEndpointClient := newPublicActionInvocationEndpointClient(userServerActionInvocationEndpoint)
 
 	mainStorage := newMainStorage()
 	cache := newCache()
 	rateLimitStorage := newRateLimitStorage()
+	userServerClient := faroe.NewUserServerClient(userActionInvocationEndpointClient)
 	logger := newStderrActionsLogger()
 	userPasswordHashAlgorithm := newArgon2id(3, 1024*64, 1)
 	temporaryPasswordHashAlgorithm := newArgon2id(3, 1024*16, 1)
 	emailSender := newStdoutActionsEmailSender()
-	userActionInvocationEndpointClient := newPublicActionInvocationEndpointClient(userServerActionInvocationEndpoint)
 
 	server := faroe.NewServer(
 		mainStorage,
 		cache,
 		rateLimitStorage,
+		userServerClient,
 		logger,
 		[]faroe.PasswordHashAlgorithmInterface{userPasswordHashAlgorithm},
 		temporaryPasswordHashAlgorithm,
@@ -51,7 +53,6 @@ func main() {
 		faroe.RealClock,
 		faroe.AllowAllEmailAddresses,
 		emailSender,
-		userActionInvocationEndpointClient,
 		faroe.SessionConfigStruct{
 			InactivityTimeout:     30 * 24 * time.Hour,
 			ActivityCheckInterval: time.Minute,
