@@ -110,6 +110,7 @@ func newPublicActionInvocationEndpointClient(endpoint string) *publicActionInvoc
 
 func (publicActionInvocationEndpointClient *publicActionInvocationEndpointClientStruct) SendActionInvocationEndpointRequest(body string) (string, error) {
 	request, _ := http.NewRequest("POST", publicActionInvocationEndpointClient.endpoint, strings.NewReader(body))
+	request.Header.Set("Content-Type", "application/json")
 
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
